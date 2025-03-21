@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Finder</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        #ingredient-search {
+            margin-bottom: 10px;
+        }
+
+        #ingredient-list {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .ingredient-item {
+            display: inline-block;
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #selected-ingredients {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        #selected-ingredients .ingredient-item {
+            background-color: #e0f7fa;
+        }
+
+        #submit-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="./index.html">Recipe Finder</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./index.html">Home</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a type="button" class="btn btn-outline-light mx-1" href="./login.html">Login</a>
+                    <a href="./signup.html" type="button" class="btn btn-primary mx-1">Signup</a>
+                </div>
+            </div>
+
+    </nav>
+
+    <div class="container my-5">
+
+
+        <label for="ingredient-search" class="form-label">Search ingredients</label>
+        <input type="text" class="form-control" id="ingredient-search" placeholder="Chicken, Beef, Cheese etc">
+
+        <div id="ingredient-list">
+            <h2>Available Ingredients</h2>
+            <div class="ingredient-item" data-ingredient="chicken">Chicken</div>
+            <div class="ingredient-item" data-ingredient="beef">Beef</div>
+            <div class="ingredient-item" data-ingredient="pasta">Pasta</div>
+            <div class="ingredient-item" data-ingredient="tomatoes">Tomatoes</div>
+            <div class="ingredient-item" data-ingredient="onions">Onions</div>
+            <div class="ingredient-item" data-ingredient="garlic">Garlic</div>
+            <div class="ingredient-item" data-ingredient="rice">Rice</div>
+            <div class="ingredient-item" data-ingredient="potatoes">Potatoes</div>
+            <div class="ingredient-item" data-ingredient="carrots">Carrots</div>
+            <div class="ingredient-item" data-ingredient="broccoli">Broccoli</div>
+            <div class="ingredient-item" data-ingredient="salt">Salt</div>
+            <div class="ingredient-item" data-ingredient="pepper">Pepper</div>
+            <div class="ingredient-item" data-ingredient="olive oil">Olive Oil</div>
+        </div>
+
+        <div id="selected-ingredients">
+            <h2>Selected Ingredients</h2>
+        </div>
+
+        <button id="submit-button">Find Recipes</button>
+    </div>
+
+    <script>
+        const ingredientSearch = document.getElementById('ingredient-search');
+        const ingredientList = document.getElementById('ingredient-list');
+        const selectedIngredients = document.getElementById('selected-ingredients');
+        const submitButton = document.getElementById('submit-button');
+
+        const selected = new Set();
+        const allIngredients = Array.from(ingredientList.children).filter(el => el.classList.contains('ingredient-item')); //store all ingredients in a list
+
+        ingredientSearch.addEventListener('input', () => {
+            const searchTerm = ingredientSearch.value.toLowerCase();
+
+            allIngredients.forEach(item => {
+                const ingredient = item.dataset.ingredient.toLowerCase();
+                if (ingredient.includes(searchTerm)) {
+                    item.style.display = 'inline-block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        ingredientList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('ingredient-item')) {
+                const ingredient = event.target.dataset.ingredient;
+
+                if (selected.has(ingredient)) return;
+
+                selected.add(ingredient);
+                const selectedItem = document.createElement('div');
+                selectedItem.classList.add('ingredient-item');
+                selectedItem.dataset.ingredient = ingredient;
+                selectedItem.textContent = ingredient;
+
+                selectedItem.addEventListener('click', () => {
+                    selected.delete(ingredient);
+                    selectedItem.remove();
+                });
+
+                selectedIngredients.appendChild(selectedItem);
+            }
+        });
+
+        submitButton.addEventListener('click', () => {
+            const selectedIngredientsArray = Array.from(selected);
+            console.log('Selected ingredients:', selectedIngredientsArray);
+            // for now just redirect to recipe list page
+            window.location.href = "recipeList.html";
+            
+            // Example of sending a fetch request, replace the url with your backend.
+            /*
+            fetch('/api/recipes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ingredients: selectedIngredientsArray }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Recipes:', data);
+                // Handle the recipes data here (e.g., display them on the page).
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            */
+        });
+    </script>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
