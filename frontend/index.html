@@ -68,10 +68,6 @@
                         <a class="nav-link active" aria-current="page" href="./index.html">Home</a>
                     </li>
                 </ul>
-                <div class="d-flex">
-                    <a type="button" class="btn btn-outline-light mx-1" href="./login.html">Login</a>
-                    <a href="./signup.html" type="button" class="btn btn-primary mx-1">Signup</a>
-                </div>
             </div>
 
     </nav>
@@ -82,21 +78,8 @@
         <label for="ingredient-search" class="form-label">Search ingredients</label>
         <input type="text" class="form-control" id="ingredient-search" placeholder="Chicken, Beef, Cheese etc">
 
+        <h2>Available Ingredients</h2>
         <div id="ingredient-list">
-            <h2>Available Ingredients</h2>
-            <div class="ingredient-item" data-ingredient="chicken">Chicken</div>
-            <div class="ingredient-item" data-ingredient="beef">Beef</div>
-            <div class="ingredient-item" data-ingredient="pasta">Pasta</div>
-            <div class="ingredient-item" data-ingredient="tomatoes">Tomatoes</div>
-            <div class="ingredient-item" data-ingredient="onions">Onions</div>
-            <div class="ingredient-item" data-ingredient="garlic">Garlic</div>
-            <div class="ingredient-item" data-ingredient="rice">Rice</div>
-            <div class="ingredient-item" data-ingredient="potatoes">Potatoes</div>
-            <div class="ingredient-item" data-ingredient="carrots">Carrots</div>
-            <div class="ingredient-item" data-ingredient="broccoli">Broccoli</div>
-            <div class="ingredient-item" data-ingredient="salt">Salt</div>
-            <div class="ingredient-item" data-ingredient="pepper">Pepper</div>
-            <div class="ingredient-item" data-ingredient="olive oil">Olive Oil</div>
         </div>
 
         <div id="selected-ingredients">
@@ -107,13 +90,38 @@
     </div>
 
     <script>
+        async function getIngredients() {
+            try {
+                const response = await fetch('http://localhost:8080/ingredients');
+                const data = await response.json();
+                ingredientsArray = data;
+
+
+                let ingredientsBlock = document.getElementById('ingredient-list');
+
+                ingredientsArray.forEach(element => {
+                    let e = document.createElement("div");
+                    e.className = "ingredient-item";
+                    e.setAttribute("data-ingredient", `${element.name}`);
+                    e.innerText = `${element.name}`;
+                    ingredientsBlock.appendChild(e);
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        // Call the function
+        getIngredients();
+
+
         const ingredientSearch = document.getElementById('ingredient-search');
         const ingredientList = document.getElementById('ingredient-list');
         const selectedIngredients = document.getElementById('selected-ingredients');
         const submitButton = document.getElementById('submit-button');
 
         const selected = new Set();
-        const allIngredients = Array.from(ingredientList.children).filter(el => el.classList.contains('ingredient-item')); //store all ingredients in a list
+        const allIngredients = Array.from(ingredientList.children).filter(el => el.classList.contains('ingredient-item'));
 
         ingredientSearch.addEventListener('input', () => {
             const searchTerm = ingredientSearch.value.toLowerCase();
@@ -152,28 +160,10 @@
         submitButton.addEventListener('click', () => {
             const selectedIngredientsArray = Array.from(selected);
             console.log('Selected ingredients:', selectedIngredientsArray);
-            // for now just redirect to recipe list page
+
             window.location.href = "recipeList.html";
-            
-            // Example of sending a fetch request, replace the url with your backend.
-            /*
-            fetch('/api/recipes', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ ingredients: selectedIngredientsArray }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Recipes:', data);
-                // Handle the recipes data here (e.g., display them on the page).
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-            */
         });
+
     </script>
 
     <!-- Bootstrap -->
