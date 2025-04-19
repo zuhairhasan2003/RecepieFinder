@@ -90,14 +90,19 @@
     </div>
 
     <script>
+
+        localStorage.removeItem("recipe");
+
         async function getIngredients() {
             try {
                 const response = await fetch('http://localhost:8080/ingredients');
                 const data = await response.json();
                 ingredientsArray = data;
 
-
                 let ingredientsBlock = document.getElementById('ingredient-list');
+
+                // Clear the ingredient list before adding new ingredients
+                ingredientsBlock.innerHTML = '';
 
                 ingredientsArray.forEach(element => {
                     let e = document.createElement("div");
@@ -107,12 +112,31 @@
                     ingredientsBlock.appendChild(e);
                 });
 
+                // Update allIngredients after ingredients are added
+                const allIngredients = Array.from(ingredientsBlock.children).filter(el => el.classList.contains('ingredient-item'));
+
+                // Search functionality
+                ingredientSearch.addEventListener('input', () => {
+                    const searchTerm = ingredientSearch.value.toLowerCase();
+
+                    allIngredients.forEach(item => {
+                        const ingredient = item.dataset.ingredient.toLowerCase();
+                        if (ingredient.includes(searchTerm)) {
+                            item.style.display = 'inline-block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+
             } catch (error) {
                 console.error('Error:', error);
             }
         }
-        // Call the function
+
+        // Call the function to load ingredients
         getIngredients();
+
 
 
         const ingredientSearch = document.getElementById('ingredient-search');
@@ -161,7 +185,27 @@
             const selectedIngredientsArray = Array.from(selected);
             console.log('Selected ingredients:', selectedIngredientsArray);
 
-            window.location.href = "recipeList.html";
+            // Build query string from ingredients
+            const queryString = `ingredientNames=${selectedIngredientsArray.map(ingredient => encodeURIComponent(ingredient)).join('&')}`;
+
+            // Final API endpoint
+            const apiUrl = `http://localhost:8080/api/recipes/search?${queryString}`;
+
+
+            // Optional: make a fetch request
+            async function fetchAndStoreRecipe(apiUrl) {
+                try {
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+                    localStorage.setItem("recipe", JSON.stringify(data));
+                    window.location.href = "recipeList.html";
+                    
+                } catch (error) {
+                    console.error('Error fetching recipes:', error);
+                }
+            }
+
+            fetchAndStoreRecipe(apiUrl);
         });
 
     </script>

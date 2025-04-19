@@ -73,7 +73,7 @@
         </div>
     </nav>
 
-    <div class="recipe-container">
+    <!-- <div class="recipe-container">
         <img src="./images/demo2.jpg" alt="Recipe Image" class="recipe-image">
         <div class="recipe-details">
             <h2>Recpie Name</h2>
@@ -100,7 +100,7 @@
                 <li>Serve bolognese sauce over spaghetti.</li>
             </ol>
         </div>
-    </div>
+    </div> -->
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -109,5 +109,68 @@
         crossorigin="anonymous"></script>
 
 </body>
+
+<script>
+
+    var recipeData = JSON.parse(localStorage.getItem("recipeDisplay"))
+    console.log(recipeData)
+
+    // Create container
+    const container = document.createElement('div');
+    container.className = 'recipe-container';
+
+    // Image (placeholder or fixed path, since not in JSON)
+    const img = document.createElement('img');
+    img.src = './images/demo2.jpg';
+    img.alt = 'Recipe Image';
+    img.className = 'recipe-image';
+    container.appendChild(img);
+
+    // Details container
+    const details = document.createElement('div');
+    details.className = 'recipe-details';
+
+    // Title
+    const title = document.createElement('h2');
+    title.textContent = recipeData.name;
+    details.appendChild(title);
+
+    // Description
+    const description = document.createElement('p');
+    description.textContent = recipeData.description;
+    details.appendChild(description);
+
+    // Ingredients
+    const ingredientsTitle = document.createElement('h3');
+    ingredientsTitle.textContent = 'Ingredients:';
+    details.appendChild(ingredientsTitle);
+
+    const ingredientsList = document.createElement('ul');
+    recipeData.ingredients.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item.name;
+        ingredientsList.appendChild(li);
+    });
+    details.appendChild(ingredientsList);
+
+    // Instructions
+    const instructionsTitle = document.createElement('h3');
+    instructionsTitle.textContent = 'Instructions:';
+    details.appendChild(instructionsTitle);
+
+    const instructionsList = document.createElement('ol');
+    recipeData.instruction.split('.').filter(Boolean).forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step.trim() + '.';
+        instructionsList.appendChild(li);
+    });
+    details.appendChild(instructionsList);
+
+    // Append details to container
+    container.appendChild(details);
+
+    // Append everything to #app
+    document.body.appendChild(container);
+</script>
 
 </html>

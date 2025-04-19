@@ -48,14 +48,6 @@
         <h2>Recpies you can make</h2>
         <hr width="90%">
 
-        <div class="card" style="width: 25rem; margin: 10px;">
-            <img class="card-img-top" src="./images/demo1.jpg" alt="Recipe image">
-            <div class="card-body">
-                <h5 class="card-title"><a href="./recipe.html">Recipe name</a></h5>
-                <p class="card-text">This is a random demo text which will be later replaced by recipe description from
-                    db</p>
-            </div>
-        </div>
     </div>
 
 </body>
@@ -68,59 +60,9 @@
 
 
 <script>
-    // async function getRecipes() {
-    //     try {
-    //         const response = await fetch('http://localhost:8080/xxx');
-    //         const data = await response.json();
-    //         recipeArray = data;
+    localStorage.removeItem("recipeDisplay");
 
-
-    //         let outerContainer = document.getElementById('outer-container');
-
-    //         recipeArray.forEach(element => {
-
-    //             let outDiv = document.createElement("div");
-    //             let img = document.createElement("img");
-    //             let inDiv = document.createElement("div");
-    //             let heading = document.createElement("h5");
-    //             let a = document.createElement("a");
-    //             let p = document.createElement("p");
-
-    //             outDiv.className = "card";
-    //             outDiv.style = "width: 25rem; margin: 10px";
-
-    //             img.className = "card-img-top";
-    //             img.setAttribute("src", "./images/demo1.jpg");
-    //             outDiv.appendChild(img);
-
-    //             inDiv.className = "card-body";
-
-    //             heading.className = "card-title";
-
-    //             a.setAttribute("href", "./recipe.html");
-    //             a.innerText = "Recipe name";
-    //             heading.appendChild(a);
-
-    //             p.className = "card-text";
-    //             p.innerText = "This is a random demo text which will be later replaced by recipe description from db"
-
-    //             inDiv.appendChild(heading);
-    //             inDiv.appendChild(p);
-
-    //             outDiv.appendChild(inDiv);
-
-    //             outerContainer.appendChild(outDiv);
-    //         });
-
-    //     } catch (error) {
-    //         console.error('Error:', error);
-    //     }
-    // }
-
-    // getRecipes();
-
-    recipeArray = [{name: "hah", description: "no des"}, {name: "nah", description: "yes des"}]
-
+    var recipeArray = JSON.parse(localStorage.getItem("recipe"));
 
     let outerContainer = document.getElementsByClassName('outer-container');
 
@@ -132,6 +74,7 @@
         let heading = document.createElement("h5");
         let a = document.createElement("a");
         let p = document.createElement("p");
+        let id = document.createElement("div");
 
         outDiv.className = "card";
         outDiv.style = "width: 25rem; margin: 10px";
@@ -140,11 +83,15 @@
         img.setAttribute("src", "./images/demo1.jpg");
         outDiv.appendChild(img);
 
+        id.style = "display: none";
+        id.innerText = `${element.id}`;
+        outDiv.appendChild(id);
+
         inDiv.className = "card-body";
 
         heading.className = "card-title";
 
-        a.setAttribute("href", "./recipe.html");
+        a.className = "recipeLink";
         a.innerText = `${element.name}`;
         heading.appendChild(a);
 
@@ -159,8 +106,24 @@
         outerContainer[0].appendChild(outDiv);
     });
 
+    let recipeLink = document.querySelectorAll(".recipeLink");
+
+    console.log(recipeArray);
 
 
+    recipeLink.forEach(element => {
+        element.addEventListener('click', function (e){
+            e.preventDefault();
+
+            recipeArray.forEach(element => {
+                if(element.id == parseInt(e.target.parentNode.parentNode.parentNode.childNodes[1].innerText))
+                {
+                    localStorage.setItem("recipeDisplay", JSON.stringify(element));
+                    window.location.href = "./recipe.html";
+                }
+            });
+        })
+    });
 
 
 
